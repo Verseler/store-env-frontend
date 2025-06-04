@@ -1,16 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { getProjectsData } from "@/features/project/api";
+import { useLogout } from "@/features/auth/api/useLogout";
+import { getProjectsData } from "@/features/project/project.api";
 import { useQuery } from "@tanstack/react-query";
 
 export default function HomePage() {
-  const { logout, loading } = useAuth();
-  const { data, isLoading } = useQuery({
+  const { mutate: logout, isPending: isLogoutLoading } = useLogout();
+  const { data, isLoading: isProjectLoading } = useQuery({
     queryKey: ["projects"],
     queryFn: getProjectsData,
   });
 
-  if (isLoading) {
+  if (isProjectLoading) {
     return <p>Projects...</p>;
   }
 
@@ -18,7 +18,7 @@ export default function HomePage() {
     <>
       <section>
         Home
-        <Button onClick={logout} disabled={loading}>
+        <Button onClick={() => logout()} disabled={isLogoutLoading}>
           Logout
         </Button>
         <div>
