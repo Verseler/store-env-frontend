@@ -10,6 +10,10 @@ import { useGoogleLogin } from "@/features/auth/api/useGoogleLogin";
 export default function LoginPage() {
   const { data } = useGoogleLogin();
   const { mutate, error, isPending } = useLogin();
+  const serverErrors = (error as Partial<LoginForm>) || {
+    email: "",
+    password: "",
+  };
 
   const [form, setForm] = useState<LoginForm>({
     email: "",
@@ -35,10 +39,10 @@ export default function LoginPage() {
           name="email"
           value={form.email}
           onChange={handleOnChange}
-          invalid={error?.email}
+          invalid={!!serverErrors?.email}
           disabled={isPending}
         />
-        <InputError>{error?.email}</InputError>
+        <InputError>{serverErrors?.email}</InputError>
       </div>
 
       <div className="space-y-2">
@@ -47,10 +51,10 @@ export default function LoginPage() {
           name="password"
           value={form.password}
           onChange={handleOnChange}
-          invalid={!!error?.password}
+          invalid={!!serverErrors?.password}
           disabled={isPending}
         />
-        <InputError>{error?.password}</InputError>
+        <InputError>{serverErrors?.password}</InputError>
       </div>
 
       {data?.url != null && (
